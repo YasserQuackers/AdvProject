@@ -1,4 +1,4 @@
-package com.example.university;
+package com.example.simpleportal.Model;
 
 public class LoginForm {
     private String username;
