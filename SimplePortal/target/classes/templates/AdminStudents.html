@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><title>Admin – Students</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
+        :root{--blue:#003366;--yellow:#FFD700;--light:#f4f7f6;--white:#fff;}
+        body{background:var(--light);display:flex;min-height:100vh;}
+        .sidebar{width:240px;background:var(--blue);color:var(--white);padding:25px;flex-shrink:0;}
+        .sidebar h2{color:var(--yellow);font-size:1.3rem;margin-bottom:30px;border-bottom:2px solid var(--yellow);padding-bottom:10px;}
+        .sidebar ul{list-style:none;}
+        .sidebar ul li{margin-bottom:6px;}
+        .sidebar ul li a{display:block;padding:11px 14px;border-radius:6px;color:var(--white);text-decoration:none;font-size:14px;transition:.2s;}
+        .sidebar ul li a:hover,.sidebar ul li.active a{background:var(--yellow);color:var(--blue);font-weight:bold;}
+        .main{flex:1;padding:35px;}
+        .main h1{color:var(--blue);margin-bottom:20px;}
+        .card{background:var(--white);border-radius:12px;padding:22px;box-shadow:0 4px 14px rgba(0,0,0,.07);}
+        table{width:100%;border-collapse:collapse;}
+        th{background:var(--blue);color:var(--yellow);padding:11px 13px;text-align:left;font-size:12px;text-transform:uppercase;}
+        td{padding:11px 13px;border-bottom:1px solid #eee;font-size:13px;color:#444;}
+        tr:hover td{background:#f9f9f9;}
+        .badge{display:inline-block;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:bold;}
+        .badge-student{background:#e8f5e9;color:#2e7d32;}
+        .empty{text-align:center;color:#aaa;font-style:italic;padding:20px;}
+    </style>
+</head>
+<body>
+<nav class="sidebar">
+    <h2> Admin</h2>
+    <ul>
+        <li><a th:href="@{/admin/dashboard}">Dashboard</a></li>
+        <li class="active"><a th:href="@{/admin/students}">Students</a></li>
+        <li><a th:href="@{/admin/books}">Books</a></li>
+        <li><a th:href="@{/admin/courses}">Store Courses</a></li>
+        <li><a th:href="@{/admin/schedules}">Schedules</a></li>
+        <li><a th:href="@{/admin/orders}">All Orders</a></li>
+        <li><a th:href="@{/admin/history}">Full History</a></li>
+        <li><a th:href="@{/logout}">Logout</a></li>
+    </ul>
+</nav>
+<main class="main">
+    <h1> Registered Students</h1>
+    <div class="card">
+        <table>
+            <thead>
+            <tr><th>#</th><th>ID</th><th>Name</th><th>Email</th><th>Faculty</th><th>Phone</th><th>GPA</th><th>Courses</th></tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(students)}">
+                <td colspan="8" class="empty">No students registered yet.</td>
+            </tr>
+            <tr th:each="s,iter : ${students}">
+                <td th:text="${iter.index+1}">1</td>
+                <td th:text="${s.id}">-</td>
+                <td th:text="${s.name}">-</td>
+                <td th:text="${s.email}">-</td>
+                <td th:text="${s.faculty}">-</td>
+                <td th:text="${s.phone != null ? s.phone : '-'}">-</td>
+                <td th:text="${#numbers.formatDecimal(s.currentGpa,1,2)}">0.00</td>
+                <td th:text="${s.courseCount}">0</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>
