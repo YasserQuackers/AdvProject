@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student DashBoard</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+
+</head>
+<body>
+<div class="dashboard-container">
+    <div th:replace="fragments/cookies :: cookieBanner"></div>
+    <nav class="sidebar">
+        <h2>Portal</h2>
+        <ul>
+            <ul>
+                <li class="active">Dashboard</li>
+
+                <li><a th:href="@{/grades}">My Grades</a></li>
+
+                <li><a th:href="@{/schedule}">Schedule</a></li>
+                <li><a th:href="@{/books}">Books Store</a></li>
+                <li><a th:href="@{/Courses}">Courses Store</a></li>
+                <li><a th:href="@{/cart}">My Cart</a></li>
+                <li><a th:href="@{/profile}">Profile</a></li>
+                <li><a th:href="@{/logout}">Logout</a></li>
+            </ul>
+
+    </nav>
+
+    <main class="main-content">
+        <header>
+            <h1>Student Dashboard</h1>
+        </header>
+
+        <section class="input-card">
+            <form th:action="@{/dashboard}" method="get" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                <input type="text" name="name" th:value="${name}" placeholder="Enter Name">
+                <select name="faculty" th:value="${faculty}">
+                    <option value="CS">Computer Science</option>
+                    <option value="Engineering">Engineering</option>
+                    <option value="Business">Business</option>
+                </select>
+                <input type="number" name="semester" th:value="${semester}" placeholder="Sem (1-10)" min="1" max="10">
+                <button type="submit">View Portal</button>
+            </form>
+        </section>
+
+        <div class="display-area" th:if="${data != null}">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Student</h3>
+                    <p th:text="${data.studentName}">-</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Faculty</h3>
+                    <p th:text="${data.faculty}">-</p>
+                </div>
+                <div class="stat-card">
+                    <h3>GPA</h3>
+                    <p th:text="${data.gpa}">0.0</p>
+                </div>
+            </div>
+
+            <div class="course-card">
+                <h3>Enrolled Courses - Semester <span th:text="${data.semester}"></span></h3>
+                <ul>
+                    <li th:each="c : ${data.enrolledCourses}" th:text="${c}"></li>
+                </ul>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

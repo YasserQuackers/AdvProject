@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile</title>
+    <style>
+        body {
+            background-color: #0b1f3a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 30px 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #f1c40f;
+        }
+        .profile-container { width:100%; max-width:800px; margin:0 auto; }
+        .navbar a, .navbar span { color:#f1c40f; text-decoration:none; font-weight:bold; }
+        .profile-title { margin:10px 0; color:#f1c40f; }
+        .profile-card {
+            background-color:#112b52; border-radius:8px;
+            overflow:hidden; box-shadow:0 4px 10px rgba(0,0,0,0.3);
+            margin-bottom:24px;
+        }
+        .login-note { padding:15px; border-bottom:1px solid #f1c40f; }
+        .student-name { margin:0; padding:15px; border-bottom:1px solid #f1c40f; color:#f1c40f; }
+        .role-badge {
+            display:inline-block; margin-left:10px;
+            background:#f1c40f; color:#0b1f3a;
+            font-size:11px; font-weight:bold;
+            padding:2px 8px; border-radius:10px; vertical-align:middle;
+        }
+        table { width:100%; border-collapse:collapse; background-color:#112b52; }
+        th, td { padding:13px 15px; text-align:left; border-bottom:1px solid #f1c40f; color:#f1c40f; }
+        th { background-color:#0b1f3a; text-transform:uppercase; font-size:12px; letter-spacing:1px; width:28%; }
+        tr:hover { background-color:#1b3b6f; }
+        .section-title {
+            color:#f1c40f; font-size:1rem; font-weight:bold;
+            margin:24px 0 10px 0; text-transform:uppercase; letter-spacing:1px;
+        }
+        .log-table { width:100%; border-collapse:collapse; }
+        .log-table th { background-color:#0b1f3a; color:#f1c40f; padding:10px 12px; font-size:11px; text-transform:uppercase; }
+        .log-table td { padding:9px 12px; border-bottom:1px solid #1e3d6e; color:#ccc; font-size:13px; }
+        .log-table tr:hover td { background-color:#152c50; color:#f1c40f; }
+        .badge-action {
+            display:inline-block; padding:2px 8px; border-radius:10px;
+            font-size:11px; font-weight:bold; background:#1a3e6e; color:#f1c40f;
+        }
+        .empty-log { color:#556; font-style:italic; padding:12px; text-align:center; }
+    </style>
+</head>
+<body>
+<div class="profile-container">
+    <div class="navbar" style="margin-bottom:12px;">
+        <a th:href="@{/dashboard}">Dashboard</a>
+        <span> | </span>
+        <a th:href="@{/grades}">My Grades</a>
+        <span> | </span>
+        <a th:href="@{/history}">My History</a>
+        <span> | </span>
+        <a th:href="@{/cart}">My Cart</a>
+        <span> | </span>
+        <a th:href="@{/logout}">Logout</a>
+    </div>
+
+    <h1 class="profile-title">PROFILE</h1>
+
+    <div class="profile-card">
+        <div class="login-note" th:if="${student == null}">
+            <span style="color:#fff;">You are not logged in.</span>
+            <a th:href="@{/login}"> Login</a>
+        </div>
+
+        <h2 class="student-name">
+            <span th:text="${student != null ? student.name : 'Student Name'}">Name</span>
+            <span class="role-badge" th:if="${student != null}" th:text="${student.role}">STUDENT</span>
+        </h2>
+
+        <table>
+            <tbody>
+            <tr><th>ID</th>      <td th:text="${student != null ? student.id      : '-'}">-</td></tr>
+            <tr><th>Email</th>   <td th:text="${student != null ? student.email   : '-'}">-</td></tr>
+            <tr><th>Phone</th>   <td th:text="${student != null ? student.phone   : '-'}">-</td></tr>
+            <tr><th>Address</th> <td th:text="${student != null ? student.address : '-'}">-</td></tr>
+            <tr><th>Faculty</th> <td th:text="${student != null ? student.faculty : '-'}">-</td></tr>
+            <tr><th>GPA</th>
+                <td th:text="${student != null ? #numbers.formatDecimal(student.currentGpa,1,2) : '-'}">-</td></tr>
+            <tr><th>Courses</th>
+                <td th:text="${student != null ? student.courseCount : '-'}">-</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="section-title">Recent Activity</div>
+    <div class="profile-card">
+        <div class="empty-log" th:if="${#lists.isEmpty(logs)}">No activity recorded yet.</div>
+        <table class="log-table" th:if="${not #lists.isEmpty(logs)}">
+            <thead>
+            <tr>
+                <th>Date &amp; Time</th>
+                <th>Action</th>
+                <th>Detail</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="log,iter : ${logs}" th:if="${iter.index < 10}">
+                <td th:text="${#temporals.format(log.timestamp,'dd MMM yyyy HH:mm')}">-</td>
+                <td><span class="badge-action" th:text="${log.action}">-</span></td>
+                <td th:text="${log.detail}">-</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div style="text-align:right; margin-top:-10px; margin-bottom:20px;">
+        <a th:href="@{/history}" style="color:#f1c40f; font-size:13px;">View full history →</a>
+    </div>
+</div>
+</body>
+</html>
