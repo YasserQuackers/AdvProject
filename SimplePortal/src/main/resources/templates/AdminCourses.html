@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><title>Admin – Store Courses</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
+        :root{--blue:#003366;--yellow:#FFD700;--light:#f4f7f6;--white:#fff;}
+        body{background:var(--light);display:flex;min-height:100vh;}
+        .sidebar{width:240px;background:var(--blue);color:var(--white);padding:25px;flex-shrink:0;}
+        .sidebar h2{color:var(--yellow);font-size:1.3rem;margin-bottom:30px;border-bottom:2px solid var(--yellow);padding-bottom:10px;}
+        .sidebar ul{list-style:none;}
+        .sidebar ul li{margin-bottom:6px;}
+        .sidebar ul li a{display:block;padding:11px 14px;border-radius:6px;color:var(--white);text-decoration:none;font-size:14px;transition:.2s;}
+        .sidebar ul li a:hover,.sidebar ul li.active a{background:var(--yellow);color:var(--blue);font-weight:bold;}
+        .main{flex:1;padding:35px;}
+        .main h1{color:var(--blue);margin-bottom:20px;}
+        .card{background:var(--white);border-radius:12px;padding:22px;box-shadow:0 4px 14px rgba(0,0,0,.07);margin-bottom:24px;}
+        .card h3{color:var(--blue);margin-bottom:16px;}
+        .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;align-items:end;}
+        label{font-size:13px;font-weight:bold;color:var(--blue);display:block;margin-bottom:4px;}
+        input,select{width:100%;padding:9px 11px;border:1px solid #ccc;border-radius:6px;font-size:13px;}
+        input:focus{border-color:var(--blue);outline:none;}
+        .btn{padding:9px 20px;border:none;border-radius:6px;font-weight:bold;cursor:pointer;font-size:13px;}
+        .btn-add{background:var(--blue);color:var(--white);}
+        .btn-add:hover{background:#002244;}
+        .btn-del{background:#c0392b;color:#fff;padding:6px 14px;font-size:12px;}
+        .btn-del:hover{background:#a93226;}
+        table{width:100%;border-collapse:collapse;}
+        th{background:var(--blue);color:var(--yellow);padding:11px 13px;text-align:left;font-size:12px;text-transform:uppercase;}
+        td{padding:11px 13px;border-bottom:1px solid #eee;font-size:13px;color:#444;}
+        tr:hover td{background:#f9f9f9;}
+        .alert-error{background:#fdecea;border:1px solid #f5c6cb;color:#721c24;padding:10px 14px;border-radius:6px;margin-bottom:14px;font-size:13px;}
+        .search-row{display:flex;gap:10px;margin-bottom:18px;}
+        .empty{text-align:center;color:#aaa;font-style:italic;padding:20px;}
+    </style>
+</head>
+<body>
+<nav class="sidebar">
+    <h2>Admin</h2>
+    <ul>
+        <li><a th:href="@{/admin/dashboard}">Dashboard</a></li>
+        <li><a th:href="@{/admin/students}">Students</a></li>
+        <li><a th:href="@{/admin/books}">Books</a></li>
+        <li class="active"><a th:href="@{/admin/courses}">Store Courses</a></li>
+        <li><a th:href="@{/admin/schedules}">Schedules</a></li>
+        <li><a th:href="@{/admin/orders}">All Orders</a></li>
+        <li><a th:href="@{/admin/history}">Full History</a></li>
+        <li><a th:href="@{/logout}">Logout</a></li>
+    </ul>
+</nav>
+<main class="main">
+    <h1>Manage Store Courses</h1>
+
+    <div class="card">
+        <h3>Add New Course</h3>
+        <div class="alert-error" th:if="${param.error != null}">Course name is required.</div>
+        <form th:action="@{/admin/courses/add}" method="post">
+            <div class="form-grid">
+                <div><label>Name *</label><input type="text" name="name" placeholder="Course name" required></div>
+                <div><label>Code</label><input type="text" name="code" placeholder="e.g. CS301"></div>
+                <div><label>Instructor</label><input type="text" name="instructor" placeholder="Dr. Name"></div>
+                <div><label>Duration</label><input type="text" name="duration" placeholder="e.g. 8 weeks"></div>
+                <div><label>Price (EGP) *</label><input type="number" name="price" step="0.01" min="0" placeholder="0.00" required></div>
+                <div style="align-self:end;"><button class="btn btn-add" type="submit">+ Add Course</button></div>
+            </div>
+        </form>
+    </div>
+
+    <div class="card">
+        <h3>All Store Courses</h3>
+        <div class="search-row">
+            <form th:action="@{/admin/courses}" method="get" style="display:flex;gap:8px;width:100%;">
+                <input type="text" name="q" th:value="${q}" placeholder="Search by name or code…">
+                <button class="btn btn-add" type="submit">Search</button>
+                <a th:href="@{/admin/courses}" class="btn" style="background:#eee;color:#333;padding:9px 16px;text-decoration:none;">Clear</a>
+            </form>
+        </div>
+        <table>
+            <thead>
+            <tr><th>#</th><th>Name</th><th>Code</th><th>Instructor</th><th>Duration</th><th>Price</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(courses)}">
+                <td colspan="7" class="empty">No courses found.</td>
+            </tr>
+            <tr th:each="c,iter : ${courses}">
+                <td th:text="${iter.index+1}">1</td>
+                <td th:text="${c.name}">-</td>
+                <td th:text="${c.code}">-</td>
+                <td th:text="${c.instructor}">-</td>
+                <td th:text="${c.duration}">-</td>
+                <td th:text="${#numbers.formatDecimal(c.price,1,2)}">0.00</td>
+                <td>
+                    <form th:action="@{/admin/courses/delete}" method="post" style="display:inline;"
+                          onsubmit="return confirm('Delete this course?')">
+                        <input type="hidden" name="id" th:value="${c.id}">
+                        <button class="btn btn-del" type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

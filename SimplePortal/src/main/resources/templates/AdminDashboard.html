@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',sans-serif; }
+        :root { --blue:#003366; --yellow:#FFD700; --light:#f4f7f6; --white:#fff; }
+        body { background:var(--light); display:flex; min-height:100vh; }
+        .sidebar { width:240px; background:var(--blue); color:var(--white); padding:25px; flex-shrink:0; }
+        .sidebar h2 { color:var(--yellow); font-size:1.3rem; margin-bottom:8px; border-bottom:2px solid var(--yellow); padding-bottom:10px; }
+        .sidebar .role-tag { font-size:11px; color:#aac4ff; margin-bottom:30px; display:block; }
+        .sidebar ul { list-style:none; }
+        .sidebar ul li { margin-bottom:6px; }
+        .sidebar ul li a {
+            display:block; padding:11px 14px; border-radius:6px;
+            color:var(--white); text-decoration:none; font-size:14px; transition:.2s;
+        }
+        .sidebar ul li a:hover, .sidebar ul li.active a { background:var(--yellow); color:var(--blue); font-weight:bold; }
+        .main { flex:1; padding:35px; }
+        .main h1 { color:var(--blue); margin-bottom:6px; }
+        .subtitle { color:#666; margin-bottom:30px; font-size:14px; }
+        .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:18px; margin-bottom:32px; }
+        .stat-card {
+            background:var(--white); border-radius:12px;
+            padding:22px; text-align:center;
+            box-shadow:0 4px 14px rgba(0,0,0,.07);
+            border-top:4px solid var(--yellow);
+        }
+        .stat-card .num { font-size:2rem; font-weight:bold; color:var(--blue); }
+        .stat-card .lbl { font-size:13px; color:#777; margin-top:4px; }
+        .card { background:var(--white); border-radius:12px; padding:22px; box-shadow:0 4px 14px rgba(0,0,0,.07); }
+        .card h3 { color:var(--blue); margin-bottom:14px; }
+        table { width:100%; border-collapse:collapse; }
+        th { background:var(--blue); color:var(--yellow); padding:10px 12px; text-align:left; font-size:12px; text-transform:uppercase; }
+        td { padding:10px 12px; border-bottom:1px solid #eee; font-size:13px; color:#444; }
+        tr:hover td { background:#f9f9f9; }
+        .badge { display:inline-block; padding:2px 9px; border-radius:10px; font-size:11px; font-weight:bold; background:#e8f0fe; color:var(--blue); }
+        .empty { text-align:center; color:#aaa; font-style:italic; padding:18px; }
+    </style>
+</head>
+<body>
+<nav class="sidebar">
+    <h2>Admin</h2>
+    <span class="role-tag" th:text="'Welcome, ' + ${adminName}">Welcome</span>
+    <ul>
+        <li class="active"><a th:href="@{/admin/dashboard}"> Dashboard</a></li>
+        <li><a th:href="@{/admin/students}">Students</a></li>
+        <li><a th:href="@{/admin/books}">Books</a></li>
+        <li><a th:href="@{/admin/courses}">Store Courses</a></li>
+        <li><a th:href="@{/admin/schedules}">Schedules</a></li>
+        <li><a th:href="@{/admin/orders}">All Orders</a></li>
+        <li><a th:href="@{/admin/history}">Full History</a></li>
+        <li><a th:href="@{/logout}">Logout</a></li>
+    </ul>
+</nav>
+
+<main class="main">
+    <h1>Admin Dashboard</h1>
+    <p class="subtitle">Simple Portal — system overview</p>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="num" th:text="${studentCount}">0</div>
+            <div class="lbl">Registered Students</div>
+        </div>
+        <div class="stat-card">
+            <div class="num" th:text="${bookCount}">0</div>
+            <div class="lbl">Books in Store</div>
+        </div>
+        <div class="stat-card">
+            <div class="num" th:text="${courseCount}">0</div>
+            <div class="lbl">Store Courses</div>
+        </div>
+        <div class="stat-card">
+            <div class="num" th:text="${orderCount}">0</div>
+            <div class="lbl">Total Orders</div>
+        </div>
+    </div>
+    <div class="card">
+        <h3>Recent Activity (last 10)</h3>
+        <div class="empty" th:if="${#lists.isEmpty(recentLogs)}">No activity yet.</div>
+        <table th:if="${not #lists.isEmpty(recentLogs)}">
+            <thead>
+            <tr><th>Time</th><th>User</th><th>Action</th><th>Detail</th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="log : ${recentLogs}">
+                <td th:text="${#temporals.format(log.timestamp,'dd MMM HH:mm')}">-</td>
+                <td th:text="${log.student.name}">-</td>
+                <td><span class="badge" th:text="${log.action}">-</span></td>
+                <td th:text="${log.detail}">-</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>
