@@ -20,11 +20,6 @@ import com.example.simpleportal.Service.OrderRepository;
 import com.example.simpleportal.Service.ScheduleSlotRepository;
 import com.example.simpleportal.Service.StoreCourseRepository;
 import com.example.simpleportal.Service.StudentRepository;
-
-/**
- * AdminController – all routes under /admin/…
- * Every handler verifies COOKIE_ROLE == ADMIN before proceeding.
- */
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
@@ -52,8 +47,6 @@ public class AdminController {
         this.scheduleRepo    = scheduleRepo;
         this.logService      = logService;
     }
-
-    // ── Admin Dashboard ────────────────────────────────────────
     @GetMapping("/dashboard")
     public String dashboard(
             @CookieValue(name = PageController.COOKIE_ROLE, required = false) String role,
@@ -75,8 +68,6 @@ public class AdminController {
         model.addAttribute("recentLogs",   logService.getAll().stream().limit(10).toList());
         return "AdminDashboard";
     }
-
-    // ── Manage Students (view only) ────────────────────────────
     @GetMapping("/students")
     public String students(
             @CookieValue(name = PageController.COOKIE_ROLE, required = false) String role,
@@ -85,8 +76,6 @@ public class AdminController {
         model.addAttribute("students", studentRepo.findByRoleIgnoreCaseOrderByNameAsc("STUDENT"));
         return "AdminStudents";
     }
-
-    // ── Manage Books ───────────────────────────────────────────
     @GetMapping("/books")
     public String books(
             @CookieValue(name = PageController.COOKIE_ROLE, required = false) String role,
@@ -124,8 +113,6 @@ public class AdminController {
         });
         return "redirect:/admin/books";
     }
-
-    // ── Manage Store Courses ───────────────────────────────────
     @GetMapping("/courses")
     public String courses(
             @CookieValue(name = PageController.COOKIE_ROLE, required = false) String role,
@@ -162,8 +149,6 @@ public class AdminController {
         });
         return "redirect:/admin/courses";
     }
-
-    // ── Manage Schedules ───────────────────────────────────────
     @GetMapping("/schedules")
     public String schedules(
             @CookieValue(name = PageController.COOKIE_ROLE, required = false) String role,
@@ -208,8 +193,6 @@ public class AdminController {
         });
         return "redirect:/admin/schedules";
     }
-
-    // ── View All Orders ────────────────────────────────────────
     @GetMapping("/orders")
     public String orders(
             @CookieValue(name = PageController.COOKIE_ROLE, required = false) String role,
@@ -220,8 +203,6 @@ public class AdminController {
         model.addAttribute("orders", orderRepo.findAll());
         return "Adminorders";
     }
-
-    // ── Full Activity History ──────────────────────────────────
     @GetMapping("/history")
     public String history(
             @CookieValue(name = PageController.COOKIE_ROLE, required = false) String role,
